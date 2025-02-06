@@ -1,0 +1,101 @@
+# # Debian 안정버전을 기본 이미지로 사용
+# FROM debian:bullseye
+
+# # 환경 변수 설정
+# ENV DEBIAN_FRONTEND=noninteractive
+# ENV MYSQL_ROOT_PASSWORD=rootpassword
+# ENV MYSQL_DATABASE=wordpress
+# ENV MYSQL_USER=wordpress
+# ENV MYSQL_PASSWORD=userpassword
+
+# # 시스템 업데이트 및 MariaDB 설치
+# RUN apt-get update && apt-get install -y \
+#     # MariaDB 서버 패키지 설치
+#     mariadb-server \
+#     # 추가 유틸리티 설치
+#     mariadb-client \
+#     # 프로세스 관리를 위한 gosu 설치
+#     gosu \
+#     # 캐시 삭제로 이미지 크기 최소화
+#     && rm -rf /var/lib/apt/lists/* \
+#     # MariaDB 데이터 디렉토리 퍼미션 설정
+#     && mkdir -p /var/run/mysqld \
+#     && chown -R mysql:mysql /var/run/mysqld \
+#     && chmod 777 /var/run/mysqld
+
+# # MariaDB 설정 파일 복사
+# COPY my.cnf /etc/mysql/my.cnf
+
+# # 초기화 스크립트 복사
+# COPY init.sh /docker-entrypoint.sh
+# RUN chmod +x /docker-entrypoint.sh
+
+# # 데이터베이스 데이터가 저장될 볼륨 설정
+# # VOLUME ["/var/lib/mysql"]
+
+# # MariaDB 포트 노출
+# EXPOSE 3306
+
+# 시작 스크립트 실행
+# ENTRYPOINT ["/docker-entrypoint.sh"]
+
+# MariaDB 실행
+# CMD ["mysqld"]
+
+
+# Dockerfile
+# FROM debian:bullseye
+
+# # 환경 변수 설정
+# ENV DEBIAN_FRONTEND=noninteractive
+# ENV MYSQL_ROOT_PASSWORD=rootpassword
+# ENV MYSQL_DATABASE=wordpress
+# ENV MYSQL_USER=wordpress
+# ENV MYSQL_PASSWORD=userpassword
+
+# # 시스템 업데이트 및 MariaDB 설치
+# RUN apt-get update && apt-get install -y \
+#     mariadb-server \
+#     mariadb-client \
+#     gosu \
+#     && rm -rf /var/lib/apt/lists/* \
+#     && mkdir -p /var/run/mysqld \
+#     && chown -R mysql:mysql /var/run/mysqld \
+#     && chmod 777 /var/run/mysqld \
+#     && mkdir -p /var/log/mysql \
+#     && chown -R mysql:mysql /var/log/mysql
+
+# # MariaDB 설정 파일 복사
+# COPY ./conf/my.cnf /etc/mysql/my.cnf
+# RUN chmod 644 /etc/mysql/my.cnf
+
+# # 초기화 스크립트 복사
+# COPY ./tools/init.sh /home/init.sh
+# RUN chmod +x /home/init.sh
+
+# # 데이터베이스 데이터가 저장될 볼륨 설정
+# # VOLUME ["/var/lib/mysql"]
+
+# # MariaDB 포트 노출
+# EXPOSE 3306
+
+# # 시작 스크립트 실행
+# ENTRYPOINT ["/home/init.sh"]
+
+# # MariaDB 실행
+# # CMD ["mysqld"]
+
+FROM debian:bullseye
+
+RUN apt-get update && apt-get install -y mariadb-server
+
+# MariaDB 설정 파일 복사
+COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
+
+# 데이터베이스 초기화 스크립트 복사
+COPY tools/database_setup.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/database_setup.sh
+
+EXPOSE 3306
+
+CMD ["/usr/local/bin/database_setup.sh"]
