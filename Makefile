@@ -25,25 +25,25 @@ setup:
 # Build the Docker images
 build:
 	@printf "$(GREEN)Building Docker images...$(RESET)\n"
-	@docker-compose -f $(DOCKER_COMPOSE_FILE) build
+	@docker compose -f $(DOCKER_COMPOSE_FILE) build
 	@printf "$(GREEN)Build completed!$(RESET)\n"
 
 # Start the containers
 up:
 	@printf "$(GREEN)Starting containers...$(RESET)\n"
-	@docker-compose -f $(DOCKER_COMPOSE_FILE) up -d
+	@docker compose -f $(DOCKER_COMPOSE_FILE) up -d
 	@printf "$(GREEN)Containers are up and running!$(RESET)\n"
 
 # Stop the containers
 down:
 	@printf "$(GREEN)Stopping containers...$(RESET)\n"
-	@docker-compose -f $(DOCKER_COMPOSE_FILE) down
+	@docker compose -f $(DOCKER_COMPOSE_FILE) down
 	@printf "$(GREEN)Containers stopped!$(RESET)\n"
 
 # Stop and remove containers, networks, and volumes
 clean: down
 	@printf "$(RED)Cleaning up containers, networks, and volumes...$(RESET)\n"
-	@docker-compose -f $(DOCKER_COMPOSE_FILE) down -v
+	@docker compose -f $(DOCKER_COMPOSE_FILE) down -v
 	@docker system prune -af
 	@printf "$(RED)Clean up completed!$(RESET)\n"
 
@@ -66,10 +66,19 @@ status:
 
 # Show container logs
 logs:
-	@docker-compose -f $(DOCKER_COMPOSE_FILE) logs
+	@docker compose -f $(DOCKER_COMPOSE_FILE) logs
 
 # Enter container shell (usage: make shell service=<service_name>)
 shell:
 	@docker-compose -f $(DOCKER_COMPOSE_FILE) exec $(service) /bin/bash
 
 .PHONY: all setup build up down clean fclean re status logs shell
+
+
+#  => ERROR [nginx 2/4] RUN mkdir /etc/nginx/ssl                                            0.9s
+# ------
+#  > [nginx 2/4] RUN mkdir /etc/nginx/ssl:
+# 0.795 mkdir: cannot create directory '/etc/nginx/ssl': No such file or directory
+# ------
+# failed to solve: process "/bin/sh -c mkdir /etc/nginx/ssl" did not complete successfully: exit code: 1
+# make: *** [Makefile:28: build] 오류 17
