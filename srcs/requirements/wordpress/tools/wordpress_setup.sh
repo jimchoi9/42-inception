@@ -19,7 +19,7 @@ wp core install --allow-root \
     --admin_email=$WP_ADMIN_EMAIL
 
 # php-fpm 실행
-/usr/sbin/php-fpm7.3 -F
+/usr/sbin/php-fpm7.4 -F
 
 # cd /var/www/html/
 
