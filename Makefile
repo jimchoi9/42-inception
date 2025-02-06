@@ -82,3 +82,12 @@ shell:
 # ------
 # failed to solve: process "/bin/sh -c mkdir /etc/nginx/ssl" did not complete successfully: exit code: 1
 # make: *** [Makefile:28: build] 오류 17
+# jimchoi@jimchoi-VirtualBox:~$ docker network ls
+# NETWORK ID     NAME             DRIVER    SCOPE
+# 787a190db5e4   bridge           bridge    local
+# 95652e12e6e5   host             host      local
+# 77788232943e   none             null      local
+# 01572c42bfa8   srcs_inception   bridge    local
+# jimchoi@jimchoi-VirtualBox:~$ docker network inspect inception
+# []
+# Error response from daemon: network inception not found
