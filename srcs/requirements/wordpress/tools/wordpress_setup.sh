@@ -6,32 +6,29 @@ mkdir -p /run/php
 # WordPress 설치 디렉토리로 이동
 cd /var/www/html
 
-# 기존 파일 확인 및 정리
-if [ "$(ls -A /var/www/html)" ]; then
-    echo "Directory is not empty, cleaning..."
-    rm -rf /var/www/html/*
+# WordPress가 설치되어 있지 않은 경우에만 설치 진행
+if [ ! -f "wp-config.php" ]; then
+    # WordPress 코어 파일 다운로드
+    wp core download --allow-root
+
+    # wp-config.php 생성
+    wp config create --allow-root \
+        --dbname=$MYSQL_DATABASE \
+        --dbuser=$MYSQL_USER \
+        --dbpass=$MYSQL_PASSWORD \
+        --dbhost=mariadb
+
+    # WordPress 설치
+    wp core install --allow-root \
+        --url=$DOMAIN_NAME \
+        --title="WordPress Site" \
+        --admin_user=$WP_ADMIN_USER \
+        --admin_password=$WP_ADMIN_PASSWORD \
+        --admin_email=$WP_ADMIN_EMAIL
+
+    # 권한 설정
+    chown -R www-data:www-data /var/www/html
 fi
-
-# WordPress 코어 파일 다운로드
-wp core download --allow-root
-
-# wp-config.php 생성
-wp config create --allow-root \
-    --dbname=$MYSQL_DATABASE \
-    --dbuser=$MYSQL_USER \
-    --dbpass=$MYSQL_PASSWORD \
-    --dbhost=mariadb
-
-# WordPress 설치
-wp core install --allow-root \
-    --url=$DOMAIN_NAME \
-    --title="WordPress Site" \
-    --admin_user=$WP_ADMIN_USER \
-    --admin_password=$WP_ADMIN_PASSWORD \
-    --admin_email=$WP_ADMIN_EMAIL
-
-# 권한 설정
-chown -R www-data:www-data /var/www/html
 
 # php-fpm 실행
 exec php-fpm7.4 -F
