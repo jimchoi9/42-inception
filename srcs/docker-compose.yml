@@ -2,6 +2,8 @@ version: '3'
 
 services:
   nginx:
+    container_name: nginx
+    image: nginx
     build: 
       context: ./requirements/nginx
     ports:
@@ -15,6 +17,8 @@ services:
       - inception
 
   wordpress:
+    container_name: wordpress
+    image: wordpress
     build: 
       context: ./requirements/wordpress
     volumes:
@@ -28,6 +32,8 @@ services:
       - inception
 
   mariadb:
+    container_name: mariadb
+    image: mariadb
     build: 
       context: ./requirements/mariadb
     volumes:
