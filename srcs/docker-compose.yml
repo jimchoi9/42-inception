@@ -1,3 +1,4 @@
+# 서비스 정의 (각 서비스는 개별 컨테이너로 생성됨)
 services:
   mariadb:
     container_name: mariadb
@@ -9,12 +10,12 @@ services:
     env_file:
       - .env
     networks:
-      - inception
+      - inception-network
 
   wordpress:
     container_name: wordpress
     image: wordpress
-    build:  ./requirements/wordpress
+    build: ./requirements/wordpress
     volumes:
       - wordpress_data:/var/www/html
     depends_on:
@@ -23,7 +24,7 @@ services:
     env_file:
       - .env
     networks:
-      - inception
+      - inception-network
       
   nginx:
     container_name: nginx
@@ -37,27 +38,25 @@ services:
       - wordpress
     restart: always
     networks:
-      - inception
+      - inception-network
 
-
-
-
+# 볼륨 정의
 
 volumes:
-  wordpress_data:
+  db-volume:
     driver: local
     driver_opts:
       type: none
-      device: /home/${USER}/data/wordpress
       o: bind
-  mariadb_data:
-    driver: local
-    driver_opts:
-      type: none
       device: /home/${USER}/data/mariadb
+  wp-volume:
+    driver: local
+    driver_opts:
+      type: none
       o: bind
+      device: /home/${USER}/data/wordpress
 
+# 네트워크 정의
 networks:
-  inception:
-    name: inception
+  inception-network:
     driver: bridge
