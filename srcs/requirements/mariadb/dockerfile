@@ -12,15 +12,27 @@ RUN apt-get update && apt-get install -y \
 
 
 #mysql 디렉터리 설정
-RUN mkdir -p /var/lib/mysql && chown -R mysql:mysql /var/lib/mysql
+RUN mkdir -p /var/lib/mysql \
+	&& chown -R mysql:mysql /var/lib/mysql \
+	&& chmod 777 /var/run/mysqld
 
 #설정파일, 초기화스크립트 복사
 COPY ./conf/mariadb.cnf /etc/mysql/mariadb.cnf
-COPY ./tools/database_setup.sh /home/database_setup.sh
+
+# 초기화 스크립트를 컨테이너에 복사하고 실행 권한 부여
+# docker-entrypoint-initdb.d는 일반적으로 MariaDB/MySQL 초기화 스크립트 위치로 사용됨
+COPY ./tools/init_mariadb.sh /docker-entrypoint-initdb.d/
 
 #실행권한부여
-RUN chmod +x /home/database_setup.sh
+RUN chmod +x /docker-entrypoint-initdb.d/init_mariadb.sh
 
+# MariaDB 데이터 디렉토리 설정
+# VOLUME /var/lib/mysql
+
+# MariaDB 기본 포트 3306 노출
 EXPOSE 3306
 
-ENTRYPOINT ["/home/database_setup.sh"]
+# 컨테이너 시작 시 실행할 명령 정의 (PID 1)
+# 초기화 스크립트가 먼저 실행됨
+ENTRYPOINT ["/docker-entrypoint-initdb.d/init_mariadb.sh"]
+
