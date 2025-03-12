@@ -37,6 +37,8 @@ services:
     depends_on:
       - wordpress
     restart: always
+    env_file:
+      - .env
     networks:
       - inception-network
 
