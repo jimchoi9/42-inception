@@ -5,7 +5,7 @@ if [ ! -f $SSL_KEY ]; then
 	openssl req -newkey rsa:2048 -nodes -x509 -days 365 \
 	-keyout $SSL_KEY \
 	-out $SSL_CRT \
-	-subj "/C=KR/ST=Seoul/L=Gaepo/O=hyeognsh/CN=$DOMAIN_NAME"
+	-subj "/C=KR/ST=Seoul/L=Gaepo/O=jimchoi/CN=$DOMAIN_NAME"
 fi
 
 nginx -g "daemon off;"
