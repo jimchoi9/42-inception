@@ -1,38 +1,74 @@
 FROM debian:bullseye
 
-# MariaDB 설치
-# dumb-init은 PID 1로 실행되는 init 프로세스 역할을 합니다.
-# MariaDB 서버와 클라이언트를 함께 설치합니다.
-# apt update로 다운로드된 패키지 목록 캐시를 삭제하여 이미지 크기를 줄이는 역할을 합니다.
+# # MariaDB 설치
+# # dumb-init은 PID 1로 실행되는 init 프로세스 역할을 합니다.
+# # MariaDB 서버와 클라이언트를 함께 설치합니다.
+# # apt update로 다운로드된 패키지 목록 캐시를 삭제하여 이미지 크기를 줄이는 역할을 합니다.
+# RUN apt-get update && apt-get install -y \
+# 	dumb-init \
+# 	mariadb-server \
+# 	mariadb-client \
+# 	&& rm -rf /var/lib/apt/lists/* 
+
+
+# #mysql 디렉터리 설정
+# RUN mkdir -p /var/run/mysqld \
+# 	&& chown -R mysql:mysql /var/run/mysql
+# 	# && chmod 777 /var/run/mysql
+
+# #설정파일, 초기화스크립트 복사
+# COPY ./conf/mariadb.cnf /etc/mysql/mariadb.cnf
+
+# # 초기화 스크립트를 컨테이너에 복사하고 실행 권한 부여
+# # docker-entrypoint-initdb.d는 일반적으로 MariaDB/MySQL 초기화 스크립트 위치로 사용됨
+# COPY ./tools/init_mariadb.sh /docker-entrypoint-initdb.d/
+
+# #실행권한부여
+# RUN chmod +x /docker-entrypoint-initdb.d/init_mariadb.sh
+
+# # MariaDB 데이터 디렉토리 설정
+# # VOLUME /var/lib/mysql
+
+# # MariaDB 기본 포트 3306 노출
+# EXPOSE 3306
+
+# # 컨테이너 시작 시 실행할 명령 정의 (PID 1)
+# # 초기화 스크립트가 먼저 실행됨
+# ENTRYPOINT ["/docker-entrypoint-initdb.d/init_mariadb.sh"]
+
 RUN apt-get update && apt-get install -y \
 	dumb-init \
 	mariadb-server \
 	mariadb-client \
 	&& rm -rf /var/lib/apt/lists/* 
 
+# Create necessary directories and set permissions
+RUN mkdir -p /var/run/mysqld \
+    && chown -R mysql:mysql /var/run/mysqld
+# mysqld가 사용할 소켓 디렉토리를 생성하고 mysql 사용자 권한 부여
+# mysqld가 실행 중에 소켓 파일 생성 가능하도록 설정
 
-#mysql 디렉터리 설정
-RUN mkdir -p /var/run/mysql \
-	&& chown -R mysql:mysql /var/run/mysql \
-	&& chmod 777 /var/run/mysql
+# Initialize the database
+RUN mysql_install_db --user=mysql --datadir=/var/lib/mysql
+# MariaDB 데이터베이스 초기화 (시스템 테이블 생성)
+# mysql 사용자로 /var/lib/mysql 위치에 데이터베이스 파일 생성
 
-#설정파일, 초기화스크립트 복사
-COPY ./conf/mariadb.cnf /etc/mysql/mariadb.cnf
+# Expose the port
+EXPOSE 3306
+# MariaDB 기본 포트 3306 노출
 
+COPY conf/mariadb.cnf /etc/my.cnf.d/
+# 사용자 정의 MariaDB 설정 파일을 컨테이너 내부로 복사
+
+COPY tools/init_mariadb.sh /docker-entrypoint-initdb.d/
+RUN chmod +x /docker-entrypoint-initdb.d/init_mariadb.sh
 # 초기화 스크립트를 컨테이너에 복사하고 실행 권한 부여
 # docker-entrypoint-initdb.d는 일반적으로 MariaDB/MySQL 초기화 스크립트 위치로 사용됨
-COPY ./tools/init_mariadb.sh /docker-entrypoint-initdb.d/
 
-#실행권한부여
-RUN chmod +x /docker-entrypoint-initdb.d/init_mariadb.sh
-
-# MariaDB 데이터 디렉토리 설정
-# VOLUME /var/lib/mysql
-
-# MariaDB 기본 포트 3306 노출
-EXPOSE 3306
-
+ENTRYPOINT ["/docker-entrypoint-initdb.d/init_mariadb.sh"]
 # 컨테이너 시작 시 실행할 명령 정의 (PID 1)
 # 초기화 스크립트가 먼저 실행됨
-ENTRYPOINT ["/docker-entrypoint-initdb.d/init_mariadb.sh"]
 
+CMD ["mysqld", "--user=mysql"]
+# ENTRYPOINT 스크립트가 완료된 후 실행될 기본 명령
+# mysql 사용자 권한으로 mysqld 서버 실행
