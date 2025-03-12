@@ -43,13 +43,13 @@ services:
 # 볼륨 정의
 
 volumes:
-  db-volume:
+  mariadb_data:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: /home/${USER}/data/mariadb
-  wp-volume:
+  wordpress_data:
     driver: local
     driver_opts:
       type: none

@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 #mysql 디렉터리 설정
 RUN mkdir -p /var/run/mysql \
 	&& chown -R mysql:mysql /var/run/mysql \
-	&& chmod 777 /var/run/mysqld
+	&& chmod 777 /var/run/mysql
 
 #설정파일, 초기화스크립트 복사
 COPY ./conf/mariadb.cnf /etc/mysql/mariadb.cnf
