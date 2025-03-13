@@ -36,3 +36,5 @@ EXPOSE 3306
 # 초기화 스크립트가 먼저 실행됨
 ENTRYPOINT ["/docker-entrypoint-initdb.d/init_mariadb.sh"]
 
+# MariaDB를 포그라운드에서 실행 (init_mariadb.sh가 자동 실행됨)
+CMD ["mysqld_safe"]
