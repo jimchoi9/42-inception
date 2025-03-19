@@ -12,12 +12,12 @@ RUN apt-get update && apt-get install -y \
 
 
 #mysql 디렉터리 설정
-RUN mkdir -p /var/run/mysql \
-	&& chown -R mysql:mysql /var/run/mysql \
-	&& chmod 777 /var/run/mysql
+RUN mkdir -p /var/lib/mysql \
+	&& chown -R mysql:mysql /var/lib/mysql \
+	&& chmod 777 /var/lib/mysql
 
 #설정파일, 초기화스크립트 복사
-COPY ./conf/mariadb.cnf /etc/mysql/mariadb.cnf
+COPY ./conf/mariadb.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
 # 초기화 스크립트를 컨테이너에 복사하고 실행 권한 부여
 # docker-entrypoint-initdb.d는 일반적으로 MariaDB/MySQL 초기화 스크립트 위치로 사용됨
