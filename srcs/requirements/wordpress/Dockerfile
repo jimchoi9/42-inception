@@ -4,7 +4,7 @@ RUN apt update && apt install -y \
 	curl \
 	php \
 	php-mysql \
-	php8.2-fpm \
+	php7.4-fpm \
 	mariadb-client 
 
 
@@ -13,7 +13,7 @@ RUN chmod +x wp-cli.phar
 RUN mv wp-cli.phar /usr/local/bin/wp
 RUN mkdir wordpress
 
-COPY ./conf/www.conf /etc/php/8.2/fpm/pool.d
+COPY ./conf/www.conf /etc/php/7,4/fpm/pool.d
 COPY ./tools/wordpress_setup.sh ./
 
 ENTRYPOINT [ "sh", "wordpress_setup.sh" ]
