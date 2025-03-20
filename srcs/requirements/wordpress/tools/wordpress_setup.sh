@@ -12,6 +12,6 @@
   
 chown -R www-data:www-data /wordpress
 
-wp user create guest ${WP_EMAIL} --role=$WP_USER --user_pass=$WP_PASSWORD --allow-root
-
-php-fpm8.2 -F
+# wp user create guest ${WP_EMAIL} --role=$WP_USER --user_pass=$WP_PASSWORD --allow-root
+wp user create $WP_USER  user@test.com --role=contributor --user_pass=$WP_PASSWORD --allow-root
+php-fpm7.4 -F
