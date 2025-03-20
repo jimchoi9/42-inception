@@ -18,4 +18,6 @@ COPY ./tools/wordpress_setup.sh ./
 
 RUN mkdir /run/php
 
+EXPOSE 9000
+
 ENTRYPOINT [ "sh", "wordpress_setup.sh" ]
