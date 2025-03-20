@@ -11,9 +11,11 @@ RUN apt update && apt install -y \
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar 
 RUN chmod +x wp-cli.phar 
 RUN mv wp-cli.phar /usr/local/bin/wp
-RUN mkdir wordpress
+
 
 COPY ./conf/www.conf /etc/php/7,4/fpm/pool.d
 COPY ./tools/wordpress_setup.sh ./
+
+RUN mkdir /run/php
 
 ENTRYPOINT [ "sh", "wordpress_setup.sh" ]
