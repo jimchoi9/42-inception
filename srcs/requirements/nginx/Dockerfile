@@ -2,9 +2,11 @@ FROM debian:bullseye
 
 
 RUN apt update && \
-	apt install -y nginx && \
+	apt install -y nginx curl && \
 	apt install -y openssl && \
 	rm -rf /var/lib/apt/lists/*
+
+
 
 
 
