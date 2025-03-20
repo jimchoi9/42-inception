@@ -1,6 +1,7 @@
 FROM debian:bullseye
 
 RUN apt update && apt install -y \
+	curl \
 	php \
 	php-mysql \
 	php8.2-fpm \
