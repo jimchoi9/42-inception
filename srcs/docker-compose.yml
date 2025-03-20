@@ -28,6 +28,7 @@ services:
     init: true
       
   nginx:
+    init: true
     container_name: nginx
     image: nginx
     build: ./requirements/nginx

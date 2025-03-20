@@ -18,4 +18,4 @@ RUN chmod +x /home/nginx.sh
 # 443 포트 개방
 EXPOSE 443
 
-ENTRYPOINT ["/home/nginx.sh"]
+ENTRYPOINT ["bash", "/home/nginx.sh"]
