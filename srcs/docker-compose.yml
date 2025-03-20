@@ -25,6 +25,10 @@ services:
       - .env
     networks:
       - inception-network
+    pull_policy: never
+    expose:
+      - 9000
+    init: true
       
   nginx:
     container_name: nginx
