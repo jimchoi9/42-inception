@@ -1,5 +1,6 @@
 # 서비스 정의 (각 서비스는 개별 컨테이너로 생성됨)
 services:
+
   mariadb:
     container_name: mariadb
     image: mariadb
@@ -11,6 +12,7 @@ services:
       - .env
     networks:
       - inception-network
+    init: true
 
   wordpress:
     container_name: wordpress
@@ -28,7 +30,6 @@ services:
     init: true
       
   nginx:
-    init: true
     container_name: nginx
     image: nginx
     build: ./requirements/nginx
@@ -43,16 +44,17 @@ services:
       - .env
     networks:
       - inception-network
+    init: true
+
 
 # 볼륨 정의
-
 volumes:
   mariadb_data:
-    driver: local
+    driver: local   # 호스트 시스템의 디스크에 저장
     driver_opts:
-      type: none
-      o: bind
-      device: /home/${USER}/data/mariadb
+      type: none # 이미 존재하는 디랙토리를 마운트
+      o: bind # 볼륨이 호스트 시스템의 특정 디렉토리에 직접 연결됨
+      device: /home/${USER}/data/mariadb # 호스트시스템이서 마운트 할 경로
   wordpress_data:
     driver: local
     driver_opts:

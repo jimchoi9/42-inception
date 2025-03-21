@@ -26,8 +26,6 @@ COPY ./tools/init_mariadb.sh /docker-entrypoint-initdb.d/
 #실행권한부여
 RUN chmod +x /docker-entrypoint-initdb.d/init_mariadb.sh
 
-# MariaDB 데이터 디렉토리 설정
-# VOLUME /var/lib/mysql
 
 # MariaDB 기본 포트 3306 노출
 EXPOSE 3306
